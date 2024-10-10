@@ -4,6 +4,6 @@ import { DeadlinesService } from './deadlines.service';
 
 @Module({
   controllers: [DeadlinesController],
-  providers: [DeadlinesService]
+  providers: [DeadlinesService],
 })
 export class DeadlinesModule {}

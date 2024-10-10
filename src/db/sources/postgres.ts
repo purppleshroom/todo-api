@@ -18,9 +18,9 @@ interface ConfigService {
 
 export const postgresDataSourceGenerator = (
   configService: ConfigService,
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   migrations?: MixedList<string | Function>,
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   subscribers?: MixedList<string | Function>,
 ) =>
   new DataSource({

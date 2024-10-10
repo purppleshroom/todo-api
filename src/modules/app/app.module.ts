@@ -24,7 +24,9 @@ import { postgresDataSourceGenerator } from '../../db/sources/postgres';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => [
         {
-          rootPath: normalize(configService.get<string>('CLIENT_ROOT_PATH') || ''),
+          rootPath: normalize(
+            configService.get<string>('CLIENT_ROOT_PATH') || '',
+          ),
           renderPath: '/client*',
         },
       ],
@@ -32,7 +34,8 @@ import { postgresDataSourceGenerator } from '../../db/sources/postgres';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => postgresDataSourceGenerator(configService).options,
+      useFactory: (configService: ConfigService) =>
+        postgresDataSourceGenerator(configService).options,
     }),
     UsersModule,
     ProjectsModule,
