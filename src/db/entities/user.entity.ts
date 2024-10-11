@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('users')
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -16,9 +16,6 @@ export class User {
 
   @Column()
   password: string;
-
-  @Column()
-  salt: string;
 
   @Column({ default: false })
   emailConfirmed: boolean;

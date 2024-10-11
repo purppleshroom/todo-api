@@ -13,11 +13,14 @@ export class RefreshToken {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.id, { nullable: false })
+  @ManyToOne(() => User, { nullable: false })
   user: User;
 
   @Column()
   token: string;
+
+  @Column()
+  invalidated: boolean;
 
   @Column()
   expirationDate: Date;

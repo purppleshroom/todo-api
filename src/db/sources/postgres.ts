@@ -5,15 +5,14 @@ import { User } from '../entities/user.entity';
 import { Project } from '../entities/project.entity';
 import { Task } from '../entities/task.entity';
 import { Category } from '../entities/category.entity';
-import { TaskCategory } from '../entities/task-category.entity';
 import { Deadline } from '../entities/deadline.entity';
 import { Reminder } from '../entities/reminder.entity';
-import { AccessToken } from '../entities/access-token.entity';
 import { RefreshToken } from '../entities/refresh-token.entity';
 import { ConfirmationToken } from '../entities/confirmation-token.entity';
 
 interface ConfigService {
-  get: <T>(env: string) => T;
+  get: <T>(env: string) => T | undefined;
+  getOrThrow: <T>(env: string) => T;
 }
 
 export const postgresDataSourceGenerator = (
@@ -25,20 +24,18 @@ export const postgresDataSourceGenerator = (
 ) =>
   new DataSource({
     type: 'postgres',
-    host: configService.get<string>('POSTGRES_HOST'),
-    port: configService.get<number>('POSTGRES_PORT'),
-    username: configService.get<string>('POSTGRES_USER'),
-    password: configService.get<string>('POSTGRES_PASSWORD'),
-    database: configService.get<string>('POSTGRES_DB'),
+    host: configService.getOrThrow<string>('POSTGRES_HOST'),
+    port: configService.getOrThrow<number>('POSTGRES_PORT'),
+    username: configService.getOrThrow<string>('POSTGRES_USER'),
+    password: configService.getOrThrow<string>('POSTGRES_PASSWORD'),
+    database: configService.getOrThrow<string>('POSTGRES_DB'),
     entities: [
       User,
       Project,
       Task,
       Category,
-      TaskCategory,
       Deadline,
       Reminder,
-      AccessToken,
       RefreshToken,
       ConfirmationToken,
     ],

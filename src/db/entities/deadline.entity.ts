@@ -5,15 +5,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Task } from './task.entity'; // Import Task entity
 
-@Entity('deadlines')
+@Entity('deadline')
 export class Deadline {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Task, (task) => task.id, { nullable: false })
+  @ManyToOne(() => Task, { nullable: false })
+  @JoinColumn({ name: 'taskId' })
   task: Task;
 
   @Column('timestamp')

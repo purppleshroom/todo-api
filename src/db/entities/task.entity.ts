@@ -5,8 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  ManyToMany,
+  JoinColumn,
+  JoinTable,
 } from 'typeorm';
 import { Project } from './project.entity';
+import { Category } from './category.entity';
 
 export enum TaskStatus {
   CREATED,
@@ -16,12 +20,13 @@ export enum TaskStatus {
   ARCHIVED,
 }
 
-@Entity('tasks')
+@Entity('task')
 export class Task {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Project, (project) => project.id, { nullable: false })
+  @ManyToOne(() => Project, { nullable: false })
+  @JoinColumn({ name: 'projectId' })
   project: Project;
 
   @Column()
@@ -36,6 +41,20 @@ export class Task {
     default: TaskStatus.CREATED,
   })
   status: TaskStatus;
+
+  @ManyToMany(() => Category, (category) => category.tasks)
+  @JoinTable({
+    name: 'task_category',
+    joinColumn: {
+      name: 'task_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'category_id',
+      referencedColumnName: 'id',
+    },
+  })
+  categories: Category[];
 
   @CreateDateColumn()
   createdAt: Date;

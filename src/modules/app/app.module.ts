@@ -6,7 +6,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from '../users/users.module';
 import { ProjectsModule } from '../projects/projects.module';
 import { AuthModule } from '../auth/auth.module';
 import { TasksModule } from '../tasks/tasks.module';
@@ -25,7 +24,7 @@ import { postgresDataSourceGenerator } from '../../db/sources/postgres';
       useFactory: (configService: ConfigService) => [
         {
           rootPath: normalize(
-            configService.get<string>('CLIENT_ROOT_PATH') || '',
+            configService.getOrThrow<string>('CLIENT_ROOT_PATH'),
           ),
           renderPath: '/client*',
         },
@@ -37,7 +36,6 @@ import { postgresDataSourceGenerator } from '../../db/sources/postgres';
       useFactory: (configService: ConfigService) =>
         postgresDataSourceGenerator(configService).options,
     }),
-    UsersModule,
     ProjectsModule,
     AuthModule,
     TasksModule,
