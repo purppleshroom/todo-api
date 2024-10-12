@@ -29,13 +29,17 @@ export class ConfirmationTokensService {
     );
 
     const expirationDate = new Date(Date.now() + ms(expirationDuration));
-    const confirmationToken = await this.confirmationRepository.create({
+
+    const newConfirmationToken = await this.confirmationRepository.create({
       token,
       user: { id: userId },
       expirationDate,
     });
 
-    return confirmationToken.token;
+    const savedConfirmationToken =
+      await this.confirmationRepository.save(newConfirmationToken);
+
+    return savedConfirmationToken.token;
   }
 
   async confirmEmail(token: string): Promise<void> {
@@ -52,6 +56,15 @@ export class ConfirmationTokensService {
     if (emailToken.expirationDate < new Date()) {
       throw new UnauthorizedException('Token has expired');
     }
+
+    await this.confirmationRepository.update(
+      {
+        token,
+      },
+      {
+        used: true,
+      },
+    );
 
     return this.usersService.confirmUser(emailToken.user);
   }

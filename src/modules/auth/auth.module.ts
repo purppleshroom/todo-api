@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
@@ -10,6 +10,10 @@ import { RefreshToken } from '../../db/entities/refresh-token.entity';
 import { MailerModule } from '../mailer/mailer.module';
 import { ConfirmationTokensModule } from '../confirmation-tokens/confirmation-tokens.module';
 import { UsersModule } from '../users/users.module';
+import { AccessTokenStrategy } from './strategies/access-token.strategy';
+import { AccessTokenGuard } from './guards/refresh-token.guard';
+import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
+import { RefreshTokenGuard } from './guards/access-token.guard';
 
 @Module({
   imports: [
@@ -44,6 +48,21 @@ import { UsersModule } from '../users/users.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [
+    AuthService,
+    AccessTokenStrategy,
+    AccessTokenGuard,
+    RefreshTokenStrategy,
+    RefreshTokenGuard,
+    {
+      provide: 'ACCESS_JWT_SERVICE',
+      useExisting: JwtService,
+    },
+    {
+      provide: 'REFRESH_JWT_SERVICE',
+      useExisting: JwtService,
+    },
+  ],
+  exports: [AccessTokenGuard],
 })
 export class AuthModule {}

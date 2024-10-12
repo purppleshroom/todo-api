@@ -11,8 +11,6 @@ describe('UsersService', () => {
   beforeEach(async () => {
     const { unit, unitRef } = await TestBed.create(UsersService).compile();
 
-    console.log(JSON.stringify(unitRef));
-
     service = unit;
     userRepository = unitRef.get<Repository<User>>('UserRepository');
   });

@@ -27,13 +27,13 @@ export class MailerService {
   }
 
   async sendConfirmationEmail(userId: number, email: string): Promise<void> {
-    const token = this.confirmationService.create(userId);
+    const token = await this.confirmationService.create(userId);
 
     await this.nodemailerTransport.sendMail({
       from: this.nodemailerEmail,
       to: email,
       subject: 'Confirmation Email',
-      text: `Please confirm your email by clicking the following link: http://localhost:3000/users/confirm-email?token=${token}`,
+      text: `Please confirm your email by clicking the following link: http://localhost:3000/confirmation-tokens/confirm-email?token=${token}`,
     });
   }
 }

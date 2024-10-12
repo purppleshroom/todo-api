@@ -1,8 +1,10 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Request, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
-import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
 import { AuthService } from './auth.service';
+import { TokenPayload } from './dto/token-payload.dto';
+import { RefreshTokenGuard } from './guards/access-token.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -18,15 +20,18 @@ export class AuthController {
     return this.authService.signIn(signInDto);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(RefreshTokenGuard)
   @Post('refresh-access-token')
-  async refreshAccessToken(
-    @Body() refreshAccessTokenDto: RefreshAccessTokenDto,
-  ) {
-    return this.authService.refreshAccessToken(refreshAccessTokenDto);
+  async refreshAccessToken(@Request() req: { user: TokenPayload }) {
+    const payload = req.user;
+    return this.authService.refreshAccessToken(payload.sub);
   }
 
+  @UseGuards(RefreshTokenGuard)
   @Post('logout')
-  async logout(@Body() refreshAccessTokenDto: RefreshAccessTokenDto) {
-    return this.authService.logout(refreshAccessTokenDto);
+  async logout(@Request() req: { user: TokenPayload }) {
+    const payload = req.user;
+    return this.authService.logout(payload.sub);
   }
 }

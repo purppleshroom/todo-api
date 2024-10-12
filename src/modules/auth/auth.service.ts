@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -10,21 +15,16 @@ import { User } from '../../db/entities/user.entity';
 import { RefreshToken } from '../../db/entities/refresh-token.entity';
 import { SignUpDto } from '../auth/dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
-import { RefreshAccessTokenDto } from './dto/refresh-access-token.dto';
 import { MailerService } from '../mailer/mailer.service';
 import { UsersService } from '../users/users.service';
-
-interface TokenPayload {
-  sub: number;
-  exp: string;
-}
+import { TokenPayload } from './dto/token-payload.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private configService: ConfigService,
-    private accessJwtService: JwtService,
-    private refreshJwtService: JwtService,
+    @Inject('ACCESS_JWT_SERVICE') private accessJwtService: JwtService,
+    @Inject('REFRESH_JWT_SERVICE') private refreshJwtService: JwtService,
     private userService: UsersService,
     private mailerService: MailerService,
     @InjectRepository(RefreshToken)
@@ -53,43 +53,32 @@ export class AuthService {
     const accessTokenPayload = await this.createAccessToken(user);
     const refreshTokenPayload = await this.createRefreshToken(user);
 
-    await this.refreshRepository.create(refreshTokenPayload);
+    const newRefreshToken = await this.refreshRepository.create({
+      user: user,
+      expirationDate: refreshTokenPayload.expirationDate,
+      token: refreshTokenPayload.token,
+    });
+    const savedRefreshToken =
+      await this.refreshRepository.save(newRefreshToken);
 
     return {
       accessToken: accessTokenPayload.token,
-      refreshToken: refreshTokenPayload.token,
+      refreshToken: savedRefreshToken.token,
     };
   }
 
-  async logout(refreshTokenDto: RefreshAccessTokenDto) {
-    console.log(refreshTokenDto, 'logout');
+  async logout(userId: number) {
+    console.log(userId, 'logout');
   }
 
-  async refreshAccessToken(refreshAccessTokenDto: RefreshAccessTokenDto) {
-    const refreshToken = refreshAccessTokenDto.refreshToken;
-    if (!refreshToken) {
-      throw new UnauthorizedException('Refresh token is invalid');
+  async refreshAccessToken(userId: number) {
+    const user = await this.userService.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
     }
 
-    try {
-      await this.validateRefreshToken(refreshToken);
-
-      const refreshTokenUser = await this.refreshRepository.findOne({
-        where: {
-          token: refreshToken,
-        },
-        relations: ['user'],
-      });
-
-      if (!refreshTokenUser || refreshTokenUser.invalidated) {
-        throw new UnauthorizedException('Refresh token is invalid');
-      }
-
-      return this.createAccessToken(refreshTokenUser.user);
-    } catch (error) {
-      console.error(error);
-      throw new UnauthorizedException('Refresh token is invalid');
-    }
+    return this.createAccessToken(user);
   }
 
   private async createAccessToken(user: User) {
@@ -101,9 +90,9 @@ export class AuthService {
       Date.now() + ms(accessTokenDuration),
     );
 
-    const payload = {
+    const payload: TokenPayload = {
       sub: user.id,
-      exp: accessTokenExpirationDate,
+      // exp: Math.floor(accessTokenExpirationDate.getTime() / 1000),
     };
 
     return {
@@ -121,18 +110,14 @@ export class AuthService {
       Date.now() + ms(refreshTokenDuration),
     );
 
-    const payload = {
+    const payload: TokenPayload = {
       sub: user.id,
-      exp: refreshTokenExpirationDate,
+      // exp: Math.floor(refreshTokenExpirationDate.getTime() / 1000),
     };
 
     return {
       token: this.refreshJwtService.sign(payload),
       expirationDate: refreshTokenExpirationDate,
     };
-  }
-
-  private async validateRefreshToken(token: string): Promise<TokenPayload> {
-    return this.refreshJwtService.verify<TokenPayload>(token);
   }
 }

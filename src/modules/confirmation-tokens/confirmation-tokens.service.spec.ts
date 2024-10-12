@@ -1,7 +1,6 @@
 import { TestBed } from '@automock/jest';
 import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
-import * as crypto from 'crypto';
 
 import { ConfirmationTokensService } from './confirmation-tokens.service';
 import { UsersService } from '../users/users.service';
@@ -12,6 +11,10 @@ jest.mock('ms', () => ({
   ...jest.requireActual('ms'),
   __esModule: true,
   default: jest.fn().mockReturnValue(100000),
+}));
+
+jest.mock('crypto', () => ({
+  randomBytes: jest.fn(() => Buffer.from('mockRandomBytesToken', 'utf-8')),
 }));
 
 describe('ConfirmationTokenService', () => {
@@ -42,11 +45,6 @@ describe('ConfirmationTokenService', () => {
 
     const mockToken = 'mockRandomBytesToken';
 
-    jest
-      .spyOn(crypto, 'randomBytes')
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      .mockImplementation((size: number) => Buffer.from(mockToken, 'utf-8'));
-
     configService.getOrThrow.mockImplementation((key: string) => {
       switch (key) {
         case 'CONFIRMATION_MAIL_EXPIRATION':
@@ -57,6 +55,23 @@ describe('ConfirmationTokenService', () => {
     });
 
     confirmationTokenRepository.create.mockReturnValue({
+      token: mockToken,
+      id: 0,
+      user: {
+        id: userId,
+        email: '',
+        password: '',
+        emailConfirmed: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      used: false,
+      expirationDate: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    confirmationTokenRepository.save.mockResolvedValue({
       token: mockToken,
       id: 0,
       user: {

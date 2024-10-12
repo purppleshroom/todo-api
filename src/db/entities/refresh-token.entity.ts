@@ -19,7 +19,7 @@ export class RefreshToken {
   @Column()
   token: string;
 
-  @Column()
+  @Column({ default: false })
   invalidated: boolean;
 
   @Column()
