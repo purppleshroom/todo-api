@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createTransport, Transporter } from 'nodemailer';
 
-import { User } from '../../db/entities/user.entity';
 import { ConfirmationTokensService } from '../confirmation-tokens/confirmation-tokens.service';
 
 @Injectable()
@@ -27,12 +26,12 @@ export class MailerService {
     });
   }
 
-  async sendConfirmationEmail(user: User): Promise<void> {
-    const token = this.confirmationService.create(user);
+  async sendConfirmationEmail(userId: number, email: string): Promise<void> {
+    const token = this.confirmationService.create(userId);
 
     await this.nodemailerTransport.sendMail({
       from: this.nodemailerEmail,
-      to: user.email,
+      to: email,
       subject: 'Confirmation Email',
       text: `Please confirm your email by clicking the following link: http://localhost:3000/users/confirm-email?token=${token}`,
     });

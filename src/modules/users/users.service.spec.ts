@@ -1,15 +1,20 @@
-import { Test, TestingModule } from '@nestjs/testing';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { TestBed } from '@automock/jest';
 import { UsersService } from './users.service';
+import { Repository } from 'typeorm';
+import { User } from 'src/db/entities/user.entity';
 
 describe('UsersService', () => {
   let service: UsersService;
+  let userRepository: jest.Mocked<Repository<User>>;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [UsersService],
-    }).compile();
+    const { unit, unitRef } = await TestBed.create(UsersService).compile();
 
-    service = module.get<UsersService>(UsersService);
+    console.log(JSON.stringify(unitRef));
+
+    service = unit;
+    userRepository = unitRef.get<Repository<User>>('UserRepository');
   });
 
   it('should be defined', () => {

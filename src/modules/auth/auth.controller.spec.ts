@@ -1,15 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { TestBed } from '@automock/jest';
 import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
+  let service: jest.Mocked<AuthService>;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [AuthController],
-    }).compile();
+    const { unit, unitRef } = await TestBed.create(AuthController).compile();
 
-    controller = module.get<AuthController>(AuthController);
+    controller = unit;
+    service = unitRef.get(AuthService);
   });
 
   it('should be defined', () => {

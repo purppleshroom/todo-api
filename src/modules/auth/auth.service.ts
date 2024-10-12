@@ -34,7 +34,7 @@ export class AuthService {
   async signUp(signUpDto: SignUpDto): Promise<void> {
     const user = await this.userService.create(signUpDto);
 
-    await this.mailerService.sendConfirmationEmail(user);
+    await this.mailerService.sendConfirmationEmail(user.id, user.email);
 
     return;
   }
