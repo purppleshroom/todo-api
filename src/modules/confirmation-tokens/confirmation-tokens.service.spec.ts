@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfirmationTokensService } from './confirmation-tokens.service';
 
-describe('UsersService', () => {
+describe('ConfirmationTokensService', () => {
   let service: ConfirmationTokensService;
 
   beforeEach(async () => {
