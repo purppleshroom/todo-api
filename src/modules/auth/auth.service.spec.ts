@@ -22,8 +22,8 @@ describe('AuthService', () => {
 
     service = unit;
     configService = unitRef.get<ConfigService>(ConfigService);
-    accessJwtService = unitRef.get<JwtService>('ACCESS_JWT_SERVICE');
-    refreshJwtService = unitRef.get<JwtService>('REFRESH_JWT_SERVICE');
+    accessJwtService = unitRef.get<JwtService>('AccessTokenService');
+    refreshJwtService = unitRef.get<JwtService>('RefreshTokenService');
     userService = unitRef.get<UsersService>(UsersService);
     mailerService = unitRef.get<MailerService>(MailerService);
     refreshRepository = unitRef.get<Repository<RefreshToken>>(

@@ -23,8 +23,8 @@ import { TokenPayload } from './dto/token-payload.dto';
 export class AuthService {
   constructor(
     private configService: ConfigService,
-    @Inject('ACCESS_JWT_SERVICE') private accessJwtService: JwtService,
-    @Inject('REFRESH_JWT_SERVICE') private refreshJwtService: JwtService,
+    @Inject('AccessTokenService') private accessJwtService: JwtService,
+    @Inject('RefreshTokenService') private refreshJwtService: JwtService,
     private userService: UsersService,
     private mailerService: MailerService,
     @InjectRepository(RefreshToken)

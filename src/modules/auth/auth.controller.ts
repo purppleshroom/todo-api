@@ -4,7 +4,7 @@ import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { AuthService } from './auth.service';
 import { TokenPayload } from './dto/token-payload.dto';
-import { RefreshTokenGuard } from './guards/access-token.guard';
+import { RefreshTokenGuard } from './jwt/guards/access-token.guard';
 
 @Controller('auth')
 export class AuthController {
