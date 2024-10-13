@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-
 import { User } from '../../db/entities/user.entity';
 import { RefreshToken } from '../../db/entities/refresh-token.entity';
 import { MailerModule } from '../mailer/mailer.module';

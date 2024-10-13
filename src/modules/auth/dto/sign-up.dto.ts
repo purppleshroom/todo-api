@@ -5,7 +5,7 @@ export class SignUpDto {
   email: string;
 
   @IsNotEmpty()
-  @MinLength(16, { message: 'Password must be at least 8 characters long' })
+  @MinLength(16, { message: 'Password must be at least 16 characters long' })
   @Matches(/(?=(.*[0-9]){3,})(?=(.*[A-Z]){3,})(?=(.*[!@#$%^&*]){3,})/, {
     message:
       'Password must contain at least 3 numbers, 3 uppercase letters, and 3 special characters',

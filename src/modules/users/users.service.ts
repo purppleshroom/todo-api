@@ -36,6 +36,10 @@ export class UsersService {
   }
 
   async findById(id: number): Promise<User | null> {
+    if (!id) {
+      return null;
+    }
+
     return this.usersRepository.findOne({
       where: { id },
     });
