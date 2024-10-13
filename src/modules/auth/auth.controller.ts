@@ -26,7 +26,10 @@ export class AuthController {
   @Post('refresh-access-token')
   async refreshAccessToken(@Request() req: { user: TokenPayload }) {
     const payload = req.user;
-    return this.authService.refreshAccessToken(payload.sub);
+    const token = (await ExtractJwt.fromAuthHeaderAsBearerToken()(
+      req,
+    )) as string;
+    return this.authService.refreshAccessToken(payload.sub, token);
   }
 
   @UseGuards(RefreshTokenGuard)
