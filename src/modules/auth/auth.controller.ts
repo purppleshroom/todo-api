@@ -5,6 +5,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { AuthService } from './auth.service';
 import { TokenPayload } from './dto/token-payload.dto';
 import { RefreshTokenGuard } from './jwt/guards/access-token.guard';
+import { ExtractJwt } from 'passport-jwt';
 
 @Controller('auth')
 export class AuthController {
@@ -32,6 +33,9 @@ export class AuthController {
   @Post('logout')
   async logout(@Request() req: { user: TokenPayload }) {
     const payload = req.user;
-    return this.authService.logout(payload.sub);
+    const token = (await ExtractJwt.fromAuthHeaderAsBearerToken()(
+      req,
+    )) as string;
+    return this.authService.logout(payload.sub, token);
   }
 }

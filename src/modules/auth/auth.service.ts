@@ -67,15 +67,26 @@ export class AuthService {
     };
   }
 
-  async logout(userId: number) {
-    console.log(userId, 'logout');
+  async logout(userId: number, token: string) {
+    return this.refreshRepository.update(
+      { token, user: { id: userId } },
+      { invalidated: true },
+    );
   }
 
-  async refreshAccessToken(userId: number) {
+  async refreshAccessToken(userId: number, token: string) {
     const user = await this.userService.findById(userId);
 
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+
+    const refreshToken = await this.refreshRepository.findOne({
+      where: { token },
+    });
+
+    if (!refreshToken || refreshToken.invalidated) {
+      throw new UnauthorizedException('Refresh token invalidated');
     }
 
     return this.createAccessToken(user);
@@ -92,7 +103,6 @@ export class AuthService {
 
     const payload: TokenPayload = {
       sub: user.id,
-      // exp: Math.floor(accessTokenExpirationDate.getTime() / 1000),
     };
 
     return {
@@ -112,7 +122,6 @@ export class AuthService {
 
     const payload: TokenPayload = {
       sub: user.id,
-      // exp: Math.floor(refreshTokenExpirationDate.getTime() / 1000),
     };
 
     return {
