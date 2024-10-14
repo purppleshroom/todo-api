@@ -1,8 +1,9 @@
 import { Controller, Post, Body, Request, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { ProjectsService } from './projects.service';
-import { ProjectsDto } from './dto/projects.dto';
-import { AccessTokenGuard } from '../auth/jwt/guards/refresh-token.guard';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { AccessTokenGuard } from '../auth/jwt/guards/access-token.guard';
+import { AccessTokenPayload } from '../auth/dto/access-token-payload.dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -11,7 +12,10 @@ export class ProjectsController {
   @ApiBearerAuth()
   @UseGuards(AccessTokenGuard)
   @Post()
-  async create(@Body() projectsDto: ProjectsDto, @Request() req: any) {
-    return this.projectService.create(req.user.userId, projectsDto);
+  async create(
+    @Body() createProjectDto: CreateProjectDto,
+    @Request() req: { user: AccessTokenPayload },
+  ) {
+    return this.projectService.create(req.user.sub, createProjectDto);
   }
 }

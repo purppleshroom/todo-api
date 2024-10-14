@@ -21,7 +21,7 @@ describe('ProjectsController', () => {
   it('should call project service on create when right dto provided', () => {
     const mockDto = { name: 'project', description: 'description' };
 
-    controller.create(mockDto, { user: { userId: 1 } });
+    controller.create(mockDto, { user: { sub: 1, exp: 123 } });
 
     expect(service.create).toHaveBeenCalledWith(1, mockDto);
   });

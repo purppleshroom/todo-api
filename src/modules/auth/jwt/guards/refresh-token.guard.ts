@@ -6,7 +6,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class AccessTokenGuard extends AuthGuard('access-token') {
+export class RefreshTokenGuard extends AuthGuard('refresh-token') {
   canActivate(context: ExecutionContext) {
     return super.canActivate(context);
   }
@@ -15,7 +15,7 @@ export class AccessTokenGuard extends AuthGuard('access-token') {
     if (err || !user) {
       throw (
         err ||
-        new UnauthorizedException('Access token is invalid or expired', info)
+        new UnauthorizedException('Refresh token is invalid or expired', info)
       );
     }
     return user;

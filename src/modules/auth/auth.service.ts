@@ -17,7 +17,6 @@ import { SignUpDto } from '../auth/dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { MailerService } from '../mailer/mailer.service';
 import { UsersService } from '../users/users.service';
-import { TokenPayload } from './dto/token-payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -101,12 +100,10 @@ export class AuthService {
       Date.now() + ms(accessTokenDuration),
     );
 
-    const payload: TokenPayload = {
-      sub: user.id,
-    };
-
     return {
-      token: this.accessJwtService.sign(payload),
+      token: this.accessJwtService.sign({
+        sub: user.id,
+      }),
       expirationDate: accessTokenExpirationDate,
     };
   }
@@ -120,12 +117,10 @@ export class AuthService {
       Date.now() + ms(refreshTokenDuration),
     );
 
-    const payload: TokenPayload = {
-      sub: user.id,
-    };
-
     return {
-      token: this.refreshJwtService.sign(payload),
+      token: this.refreshJwtService.sign({
+        sub: user.id,
+      }),
       expirationDate: refreshTokenExpirationDate,
     };
   }
