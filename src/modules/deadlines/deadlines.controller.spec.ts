@@ -1,18 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestBed } from '@automock/jest';
 import { DeadlinesController } from './deadlines.controller';
+import { DeadlinesService } from './deadlines.service';
 
 describe('DeadlinesController', () => {
   let controller: DeadlinesController;
+  let service: jest.Mocked<DeadlinesService>;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [DeadlinesController],
-    }).compile();
+    const { unit, unitRef } =
+      await TestBed.create(DeadlinesController).compile();
 
-    controller = module.get<DeadlinesController>(DeadlinesController);
+    controller = unit;
+    service = unitRef.get<DeadlinesService>(DeadlinesService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+    expect(service).toBeDefined();
   });
 });

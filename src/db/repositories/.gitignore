@@ -1,1 +1,2 @@
-TODO: move db manipulations like the ones in user service into repository so we have db <-> service separation
+TODO: move db manipulations like the ones in user service into repository
+      so we have db <-> service separation

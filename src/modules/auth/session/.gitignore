@@ -1,0 +1,3 @@
+TODO: create session token and add to every user transaction,
+      handle access and refresh tokens with it, give more controlable auth state,
+      being part of auth module
